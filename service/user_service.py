@@ -53,3 +53,9 @@ def convert_dto_to_dict(dto):
             continue
         dto_dict[key] = value
     return dto_dict
+
+
+def delete_user(user: UserEntity, session: Session) -> UserGetModel:
+    session.delete(user)
+    session.commit()
+    return UserGetModel.to_model(user)

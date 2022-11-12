@@ -21,3 +21,8 @@ def register(user_data: UserAddModel, session: Session = Depends(generate_sessio
 def update_user(new_user_data: UserUpdateModel, session: Session = Depends(generate_session),
                 user: UserEntity = Depends(get_current_user)):
     return user_service.update_user(new_user_data, user, session)
+
+
+@user_controller.delete("/api/user/")
+def delete_user(user: UserEntity = Depends(get_current_user), session: Session = Depends(generate_session)):
+    return user_service.delete_user(user, session)
