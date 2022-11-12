@@ -7,7 +7,7 @@ from model.task.change_color_model import ChangeColorModel
 from model.user.user_add_model import UserAddModel
 from model.user.user_get_model import UserGetModel
 from model.user.user_update_model import UserUpdateModel
-from service import group_service
+from service import group_service, dto_service
 
 
 def add_user(user_data: UserAddModel, session: Session) -> UserGetModel:
@@ -35,7 +35,7 @@ def hash_password(password: str):
 
 
 def update_user(new_user_data: UserUpdateModel, user: UserEntity, session: Session) -> UserGetModel:
-    new_user_data = convert_dto_to_dict(new_user_data)
+    new_user_data = dto_service.convert_dto_to_dict(new_user_data)
     if get_user_by_username(new_user_data['name'], session):
         raise UserAlreadyExists("user with such name already exists")
 
@@ -49,13 +49,6 @@ def update_user(new_user_data: UserUpdateModel, user: UserEntity, session: Sessi
     return UserGetModel.to_model(user)
 
 
-def convert_dto_to_dict(dto):
-    dto_dict = dict()
-    for key, value in dto.dict().items():
-        if dto.dict()[key] is None:
-            continue
-        dto_dict[key] = value
-    return dto_dict
 
 
 def delete_user(user: UserEntity, session: Session) -> UserGetModel:

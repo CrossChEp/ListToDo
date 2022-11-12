@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from controller.auth_controller import auth_router
+from controller.group_controller import group_controller
 from controller.task_controller import task_controller
 from controller.user_controller import user_controller
 
@@ -28,6 +29,7 @@ app.add_middleware(
 app.include_router(user_controller)
 app.include_router(auth_router)
 app.include_router(task_controller)
+app.include_router(group_controller)
 
 
 if __name__ == '__main__':
