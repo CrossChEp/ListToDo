@@ -21,3 +21,9 @@ def add_task(task_data: TaskAddModel, user: UserEntity = Depends(get_current_use
 def update_task(new_task_data: TaskUpdateModel, user: UserEntity = Depends(get_current_user),
                 session: Session = Depends(generate_session)):
     return task_service.update_task(new_task_data, user, session)
+
+
+@task_controller.delete("/api/task/{task_id}")
+def delete_task(task_id: int, user: UserEntity = Depends(get_current_user),
+                session: Session = Depends(generate_session)):
+    return task_service.delete_task(task_id, user, session)

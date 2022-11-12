@@ -40,6 +40,17 @@ def update_task(new_task_model: TaskUpdateModel, user: UserEntity, session: Sess
     return task
 
 
+def delete_task(id: int, user: UserEntity, session: Session):
+    task = get_task_by(id, session)
+    if not task:
+        raise TaskNotExists()
+    if not find_user_task(task, user):
+        raise TaskNotExists()
+    session.delete(task)
+    session.commit()
+    return task
+
+
 def get_task_by(id: int, session: Session):
     return session.query(TaskEntity).filter_by(id=id).first()
 
