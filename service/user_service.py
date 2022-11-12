@@ -2,10 +2,11 @@ import bcrypt
 from sqlalchemy.orm import Session, Query
 
 from entity.entities import UserEntity
-from exception.exceptions import UserAlreadyExists
+from exception.user_already_exists import UserAlreadyExists
 from model.user.user_add_model import UserAddModel
 from model.user.user_get_model import UserGetModel
 from model.user.user_update_model import UserUpdateModel
+from service import group_service
 
 
 def add_user(user_data: UserAddModel, session: Session) -> UserGetModel:
@@ -14,6 +15,7 @@ def add_user(user_data: UserAddModel, session: Session) -> UserGetModel:
         raise UserAlreadyExists("user with such name already exists")
     user_data.password = hash_password(user_data.password)
     user = UserEntity(**user_data.dict())
+    group_service.create_group("base", user, session)
     session.add(user)
     session.commit()
     return UserGetModel.to_model(user)
