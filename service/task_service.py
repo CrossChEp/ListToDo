@@ -4,6 +4,7 @@ from config.config import BASE_GROUP_NAME, NOT_DONE
 from entity.entities import UserEntity, GroupEntity, TaskEntity
 from exception.group_not_exists import GroupNotExists
 from exception.task_not_exists import TaskNotExists
+from model.task.change_color_model import ChangeColorModel
 from model.task.task_add_model import TaskAddModel
 from model.task.task_get_model import TaskGetModel
 from model.task.task_update_model import TaskUpdateModel
@@ -26,19 +27,19 @@ def add_task(task_data: TaskAddModel, user: UserEntity, session: Session):
 
 
 def update_task(new_task_model: TaskUpdateModel, user: UserEntity, session: Session):
-    task: TaskEntity = get_task_by(new_task_model.task_id, session)
+    task: TaskEntity = get_task_by_id(new_task_model.task_id, session)
     task_id = task.id
     is_user_has_task_or_else_throw(task, user)
     task_query: Query = session.query(TaskEntity).filter_by(id=new_task_model.task_id)
     new_task_model = convert_task_model_to_dict(new_task_model)
     task_query.update(new_task_model)
     session.commit()
-    task = get_task_by(task_id, session)
+    task = get_task_by_id(task_id, session)
     return task
 
 
 def delete_task(id: int, user: UserEntity, session: Session):
-    task = get_task_by(id, session)
+    task = get_task_by_id(id, session)
     is_user_has_task_or_else_throw(task, user)
     session.delete(task)
     session.commit()
@@ -46,9 +47,17 @@ def delete_task(id: int, user: UserEntity, session: Session):
 
 
 def complete_task(task_id: int, user: UserEntity, session: Session):
-    task = get_task_by(task_id, session)
+    task = get_task_by_id(task_id, session)
     is_user_has_task_or_else_throw(task, user)
     task.status = True
+    session.commit()
+    return task
+
+
+def change_color(change_color_model: ChangeColorModel, user: UserEntity, session: Session):
+    task = get_task_by_id(change_color_model.task_id, session)
+    is_user_has_task_or_else_throw(task, user)
+    task.color = change_color_model.color
     session.commit()
     return task
 
@@ -60,7 +69,7 @@ def is_user_has_task_or_else_throw(task: TaskEntity, user: UserEntity):
         raise TaskNotExists()
 
 
-def get_task_by(id: int, session: Session) -> TaskEntity:
+def get_task_by_id(id: int, session: Session) -> TaskEntity:
     return session.query(TaskEntity).filter_by(id=id).first()
 
 

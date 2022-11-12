@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, Query
 
 from entity.entities import UserEntity
 from exception.user_already_exists import UserAlreadyExists
+from model.task.change_color_model import ChangeColorModel
 from model.user.user_add_model import UserAddModel
 from model.user.user_get_model import UserGetModel
 from model.user.user_update_model import UserUpdateModel

@@ -28,4 +28,5 @@ class TaskEntity(base):
     name = Column(String)
     status = Column(Boolean)
     expiration_time = Column(DateTime)
+    color = Column(String)
     group = Column(Integer, ForeignKey('groups.id'))

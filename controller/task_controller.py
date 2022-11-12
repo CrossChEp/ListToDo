@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from controller.auth_controller import get_current_user
 from entity.entities import UserEntity
 from factory import generate_session
+from model.task.change_color_model import ChangeColorModel
 from model.task.task_add_model import TaskAddModel
 from model.task.task_update_model import TaskUpdateModel
 from service import task_service
@@ -33,3 +34,9 @@ def delete_task(task_id: int, user: UserEntity = Depends(get_current_user),
 def complete_task(task_id: int, user: UserEntity = Depends(get_current_user),
                   session: Session = Depends(generate_session)):
     return task_service.complete_task(task_id, user, session)
+
+
+@task_controller.post("/api/task/color")
+def change_color(change_color_model: ChangeColorModel, user: UserEntity = Depends(get_current_user),
+                 session: Session = Depends(generate_session)):
+    return task_service.change_color(change_color_model, user, session)
