@@ -28,10 +28,7 @@ def add_task(task_data: TaskAddModel, user: UserEntity, session: Session):
 def update_task(new_task_model: TaskUpdateModel, user: UserEntity, session: Session):
     task: TaskEntity = get_task_by(new_task_model.task_id, session)
     task_id = task.id
-    if not task:
-        raise TaskNotExists("task with such id doesn't exists")
-    if not find_user_task(task, user):
-        raise TaskNotExists("user has not such task")
+    is_user_has_task_or_else_throw(task, user)
     task_query: Query = session.query(TaskEntity).filter_by(id=new_task_model.task_id)
     new_task_model = convert_task_model_to_dict(new_task_model)
     task_query.update(new_task_model)
@@ -42,16 +39,28 @@ def update_task(new_task_model: TaskUpdateModel, user: UserEntity, session: Sess
 
 def delete_task(id: int, user: UserEntity, session: Session):
     task = get_task_by(id, session)
-    if not task:
-        raise TaskNotExists()
-    if not find_user_task(task, user):
-        raise TaskNotExists()
+    is_user_has_task_or_else_throw(task, user)
     session.delete(task)
     session.commit()
     return task
 
 
-def get_task_by(id: int, session: Session):
+def complete_task(task_id: int, user: UserEntity, session: Session):
+    task = get_task_by(task_id, session)
+    is_user_has_task_or_else_throw(task, user)
+    task.status = True
+    session.commit()
+    return task
+
+
+def is_user_has_task_or_else_throw(task: TaskEntity, user: UserEntity):
+    if not task:
+        raise TaskNotExists()
+    if not find_user_task(task, user):
+        raise TaskNotExists()
+
+
+def get_task_by(id: int, session: Session) -> TaskEntity:
     return session.query(TaskEntity).filter_by(id=id).first()
 
 
