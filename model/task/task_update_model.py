@@ -4,10 +4,10 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class TaskAddModel(BaseModel):
-    name: str
+class TaskUpdateModel(BaseModel):
+    task_id: int
+    name: Optional[str]
     expiration_date: Optional[datetime.date]
-    group_name: Optional[str]
 
     class Config:
         orm_mode = True
