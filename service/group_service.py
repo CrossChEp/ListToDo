@@ -57,6 +57,23 @@ def update_group(new_group_data: GroupUpdateModel, user: UserEntity, session: Se
     return group
 
 
+def delete_group(id: int, user: UserEntity, session: Session):
+    group: GroupEntity = get_group_by_id(id, session)
+    if not group:
+        raise GroupNotExists("group with such id is not found")
+    if not find_user_group(group.name, user):
+        raise GroupNotExists("user has no group with such id")
+    delete_group_tasks(group, user, session)
+    session.delete(group)
+    session.commit()
+    return group
+
+
+def delete_group_tasks(group: GroupEntity, user: UserEntity, session: Session):
+    for task in group.tasks:
+        task_service.delete_task(task.id, user, session)
+
+
 def convert_group_dto_to_dict(dto):
     dto_dict = dict()
     for key, value in dto.dict().items():

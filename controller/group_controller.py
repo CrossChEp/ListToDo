@@ -27,3 +27,9 @@ def add_tasks_to_group(task_ids: list[int], group_id: int,
 def update_group(group_update_model: GroupUpdateModel, user: UserEntity = Depends(get_current_user),
                  session: Session = Depends(generate_session)):
     return group_service.update_group(group_update_model, user, session)
+
+
+@group_controller.delete("/api/group/{group_id}")
+def delete_group(group_id: int, user: UserEntity = Depends(get_current_user),
+                 session: Session = Depends(generate_session)):
+    return group_service.delete_group(group_id, user, session)
